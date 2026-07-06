@@ -1,0 +1,9 @@
+id: rotenone
+name: Rotenone
+toxin_class: mitochondrial_inhibitor
+description: >
+  Classic Complex I inhibitor. Blocks electron transport at NADH
+  dehydrogenase, collapsing ATP production and raising mitochondrial ROS.
+requires_bioactivation: false
+targets:
+  - {node: complex_I, effect: inhibit, ic50: 0.05, hill: 1.5, emax: 1.0}

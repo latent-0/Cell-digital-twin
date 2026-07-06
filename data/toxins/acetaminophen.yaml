@@ -1,0 +1,11 @@
+id: acetaminophen
+name: Acetaminophen (APAP / paracetamol)
+toxin_class: metabolism_dependent
+description: >
+  Safe at therapeutic doses but hepatotoxic in overdose. CYP450 bioactivates
+  it to the reactive metabolite NAPQI, which depletes glutathione; once GSH is
+  exhausted, oxidative damage and death follow. Effect is gated by CYP activity,
+  so this toxin is dose-thresholded and metabolism-dependent.
+requires_bioactivation: true
+targets:
+  - {node: gsh_pool, effect: consume, ic50: 2000.0, hill: 2.0, emax: 1.0}

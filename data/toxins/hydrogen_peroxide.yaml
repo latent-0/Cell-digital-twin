@@ -1,0 +1,9 @@
+id: hydrogen_peroxide
+name: Hydrogen peroxide
+toxin_class: oxidative_stressor
+description: >
+  Direct oxidant. Floods the cell with ROS, consuming glutathione and, once
+  the antioxidant buffer is exhausted, driving lipid peroxidation and death.
+requires_bioactivation: false
+targets:
+  - {node: ros_source, effect: produce, ic50: 50.0, hill: 1.5, emax: 1.0}

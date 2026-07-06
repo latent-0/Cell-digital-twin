@@ -1,0 +1,9 @@
+id: menadione
+name: Menadione (vitamin K3)
+toxin_class: oxidative_stressor
+description: >
+  Redox-cycling quinone that generates superoxide, producing sustained
+  oxidative stress and glutathione depletion.
+requires_bioactivation: false
+targets:
+  - {node: ros_source, effect: produce, ic50: 10.0, hill: 1.5, emax: 1.0}

@@ -1,0 +1,10 @@
+id: bso
+name: Buthionine sulfoximine (BSO)
+toxin_class: gsh_depleter
+description: >
+  Inhibits GCLC (glutathione synthesis). Not very toxic alone, but by lowering
+  antioxidant capacity it strongly sensitizes cells to oxidative stressors -- a
+  useful probe for combination (synergy) testing.
+requires_bioactivation: false
+targets:
+  - {node: gclc, effect: inhibit, ic50: 20.0, hill: 1.0, emax: 0.95}

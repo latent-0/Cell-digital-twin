@@ -1,0 +1,9 @@
+id: fccp
+name: FCCP (protonophore uncoupler)
+toxin_class: mitochondrial_uncoupler
+description: >
+  Dissipates the proton-motive force so the electron transport chain runs but
+  ATP synthase cannot make ATP. Energy failure without direct ETC inhibition.
+requires_bioactivation: false
+targets:
+  - {node: proton_gradient, effect: inhibit, ic50: 1.0, hill: 1.5, emax: 1.0}

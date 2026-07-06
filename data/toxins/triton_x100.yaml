@@ -1,0 +1,9 @@
+id: triton_x100
+name: Triton X-100 (detergent)
+toxin_class: membrane_disruptor
+description: >
+  Non-ionic detergent that solubilizes the plasma membrane, causing direct
+  necrotic (lytic) cell death independent of mitochondria or oxidative stress.
+requires_bioactivation: false
+targets:
+  - {node: plasma_membrane, effect: damage, ic50: 30.0, hill: 3.0, emax: 1.0}

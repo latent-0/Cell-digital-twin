@@ -1,0 +1,82 @@
+id: hepatocyte
+name: Human hepatocyte
+description: >
+  Reference liver cell for toxicology screening. Captures mitochondrial
+  bioenergetics, the oxidative-stress / glutathione axis, xenobiotic
+  metabolism, and the apoptosis/necrosis death decision as a relation graph
+  coupled to the mechanistic ODE core.
+
+# --- Nodes: the entities of the cell -------------------------------------- #
+nodes:
+  # Organelles / compartments
+  - {id: mitochondrion, label: Mitochondrion, type: organelle}
+  - {id: nucleus,       label: Nucleus,       type: organelle}
+  - {id: er,            label: Endoplasmic reticulum, type: organelle}
+
+  # Mitochondrial electron transport chain (ETC) + ATP synthesis
+  - {id: complex_I,   label: "ETC Complex I (NADH dehydrogenase)", type: protein, process: etc, compartment: mitochondrion}
+  - {id: complex_III, label: "ETC Complex III", type: protein, process: etc, compartment: mitochondrion}
+  - {id: complex_IV,  label: "ETC Complex IV (cytochrome c oxidase)", type: protein, process: etc, compartment: mitochondrion}
+  - {id: proton_gradient, label: "Proton-motive force / ATP synthase", type: process, process: atp_synthesis, compartment: mitochondrion}
+
+  # Xenobiotic metabolism
+  - {id: cyp450, label: "Cytochrome P450 (bioactivation)", type: protein, compartment: er}
+
+  # Oxidative-stress axis
+  - {id: ros_source, label: "ROS generation", type: process, process: ros_production, compartment: mitochondrion}
+  - {id: gclc,       label: "GCLC (glutathione synthesis)", type: gene, process: gsh_synthesis, compartment: nucleus}
+  - {id: gsh_pool,   label: "Glutathione (GSH) pool", type: metabolite, process: gsh_pool}
+
+  # Death machinery
+  - {id: tp53,        label: "TP53", type: gene, compartment: nucleus}
+  - {id: bax,         label: "BAX (pro-apoptotic)", type: gene, compartment: nucleus}
+  - {id: bcl2,        label: "BCL-2 (anti-apoptotic)", type: gene}
+  - {id: cytochrome_c,label: "Cytochrome c", type: protein, compartment: mitochondrion}
+  - {id: casp3,       label: "Caspase-3 (executioner)", type: protein}
+  - {id: plasma_membrane, label: "Plasma membrane", type: organelle, process: membrane}
+
+  # Key metabolites / readouts
+  - {id: atp, label: "ATP", type: metabolite, compartment: mitochondrion}
+  - {id: ros, label: "Reactive oxygen species", type: metabolite}
+
+  # Phenotype readouts
+  - {id: apoptosis, label: "Apoptosis", type: phenotype}
+  - {id: necrosis,  label: "Necrosis", type: phenotype}
+  - {id: viability, label: "Cell viability", type: phenotype}
+
+# --- Relations: the wiring (signed, directed) ----------------------------- #
+relations:
+  - {source: complex_I,   target: proton_gradient, type: activates, sign: 1}
+  - {source: complex_III, target: proton_gradient, type: activates, sign: 1}
+  - {source: complex_IV,  target: proton_gradient, type: activates, sign: 1}
+  - {source: proton_gradient, target: atp, type: produces, sign: 1}
+  - {source: complex_I,   target: ros_source, type: inhibits, sign: -1}   # dysfunction raises ROS
+  - {source: ros_source,  target: ros, type: produces, sign: 1}
+  - {source: gclc,        target: gsh_pool, type: produces, sign: 1}
+  - {source: gsh_pool,    target: ros, type: inhibits, sign: -1}          # GSH scavenges ROS
+  - {source: cyp450,      target: gsh_pool, type: consumes, sign: -1}     # bioactivation drains GSH
+  - {source: ros,         target: plasma_membrane, type: damages, sign: -1}
+  - {source: ros,         target: tp53, type: activates, sign: 1}
+  - {source: atp,         target: apoptosis, type: inhibits, sign: -1}    # energy crisis promotes death
+  - {source: tp53,        target: bax, type: transcribes, sign: 1}
+  - {source: bax,         target: cytochrome_c, type: activates, sign: 1}
+  - {source: bcl2,        target: cytochrome_c, type: inhibits, sign: -1}
+  - {source: cytochrome_c,target: casp3, type: activates, sign: 1}
+  - {source: casp3,       target: apoptosis, type: activates, sign: 1}
+  - {source: plasma_membrane, target: necrosis, type: inhibits, sign: -1}
+  - {source: apoptosis,   target: viability, type: inhibits, sign: -1}
+  - {source: necrosis,    target: viability, type: inhibits, sign: -1}
+
+# --- Bridge from targeted nodes to ODE processes -------------------------- #
+process_map:
+  complex_I: etc
+  complex_III: etc
+  complex_IV: etc
+  proton_gradient: atp_synthesis
+  ros_source: ros_production
+  gclc: gsh_synthesis
+  gsh_pool: gsh_pool
+  plasma_membrane: membrane
+
+# --- Optional ODE parameter overrides (empty => engine defaults) ---------- #
+parameters: {}

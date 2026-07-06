@@ -1,0 +1,9 @@
+id: cyanide
+name: Potassium cyanide
+toxin_class: mitochondrial_inhibitor
+description: >
+  Complex IV (cytochrome c oxidase) inhibitor. Halts the terminal step of the
+  electron transport chain, causing rapid energy failure ("histotoxic hypoxia").
+requires_bioactivation: false
+targets:
+  - {node: complex_IV, effect: inhibit, ic50: 10.0, hill: 1.2, emax: 1.0}
