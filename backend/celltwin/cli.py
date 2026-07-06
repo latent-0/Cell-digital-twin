@@ -100,6 +100,51 @@ def _cmd_calibrate(args) -> int:
     return 0
 
 
+def _cmd_fit_bayes(args) -> int:
+    from .experiments.screen import dose_response
+    from .inference.calibrate_bayes import fit_toxin, synth_dose_response
+    from .inference.diagnostics import identifiability
+
+    cell = load_cell(args.cell)
+    toxins = load_all_toxins()
+    toxin = toxins[args.toxin]
+    m0 = dose_response(toxin, cell, toxins).ic50
+    if m0 is None:
+        print(f"{args.toxin} has no cytotoxic IC50 to calibrate.")
+        return 1
+    doses, obs = synth_dose_response(toxin, cell, center_ic50=m0, true_potency=args.true_potency, seed=1)
+    print(f"Bayesian calibration of {args.toxin} on {cell.id} (NUTS)...")
+    fit = fit_toxin(toxin, cell, doses, obs, base_model_ic50=m0,
+                    num_warmup=args.warmup, num_samples=args.samples)
+    print("  " + fit.summary())
+    ident = identifiability(fit)
+    print(f"  identifiability: shrinkage={ident['shrinkage']:.2f} -> {ident['verdict']}")
+    if args.true_potency != 1.0:
+        print(f"  (recovery check: true potency {args.true_potency}, "
+              f"recovered {float(__import__('numpy').median(fit.potency_samples)):.3f})")
+    return 0
+
+
+def _cmd_assimilate(args) -> int:
+    import numpy as np
+    from .inference.assimilate import particle_filter, synth_observations
+
+    obs_times = np.linspace(2.0, args.hours, args.n_obs)
+    obs = synth_observations(args.true_severity, obs_times, obs_indices=[0, 1],
+                             obs_noise=args.noise, seed=3)
+    res = particle_filter(obs_times, obs, obs_indices=[0, 1], obs_noise=args.noise,
+                          n_particles=args.particles, seed=1)
+    print(f"Data assimilation (particle filter): recovering ETC-inhibition severity")
+    print(f"  true severity = {args.true_severity:.2f}")
+    print(f"  {'time(h)':>8s} {'post.mean':>10s} {'90% CI width':>14s}")
+    for i, t in enumerate(obs_times):
+        w = res.theta_ci90[i, 1] - res.theta_ci90[i, 0]
+        print(f"  {t:>8.1f} {res.theta_mean[i]:>10.3f} {w:>14.3f}")
+    print(f"  final posterior median = {res.final_theta_median:.3f} "
+          f"(CI tightens as evidence accumulates)")
+    return 0
+
+
 def _parse_exposure(spec: str) -> Exposure:
     tid, _, dose = spec.partition(":")
     return Exposure(toxin_id=tid, dose=float(dose))
@@ -148,6 +193,20 @@ def main(argv: list[str] | None = None) -> int:
     p_cal = sub.add_parser("calibrate", help="calibrate potencies to literature IC50s")
     p_cal.add_argument("--apply", action="store_true", help="write the calibration overlay")
     p_cal.set_defaults(func=_cmd_calibrate)
+
+    p_fb = sub.add_parser("fit-bayes", help="Bayesian (NUTS) IC50 with credible intervals")
+    p_fb.add_argument("toxin")
+    p_fb.add_argument("--true-potency", type=float, default=1.0, help="ground truth for recovery check")
+    p_fb.add_argument("--warmup", type=int, default=400)
+    p_fb.add_argument("--samples", type=int, default=800)
+    p_fb.set_defaults(func=_cmd_fit_bayes)
+
+    p_as = sub.add_parser("assimilate", help="particle-filter data assimilation demo")
+    p_as.add_argument("--true-severity", type=float, default=0.7)
+    p_as.add_argument("--n-obs", type=int, default=8)
+    p_as.add_argument("--particles", type=int, default=1500)
+    p_as.add_argument("--noise", type=float, default=0.05)
+    p_as.set_defaults(func=_cmd_assimilate)
 
     args = parser.parse_args(argv)
     return args.func(args)

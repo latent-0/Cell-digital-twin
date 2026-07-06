@@ -12,6 +12,8 @@ the **mechanism of death**, and **combination synergy** between toxins.
 > Biology & assumptions: [`docs/biology.md`](docs/biology.md).
 > Validation & calibration: [`docs/validation.md`](docs/validation.md) —
 > model IC50s land **17/17 within 1 log** of literature (Spearman ρ = 0.996).
+> Bayesian inference & data assimilation: [`docs/inference.md`](docs/inference.md) —
+> NUTS-calibrated **IC50s with credible intervals** + a self-updating particle filter.
 
 ## How it works (hybrid engine)
 
@@ -40,6 +42,8 @@ celltwin dose-response menadione           # dose-response curve + IC50
 celltwin combine bso:150 hydrogen_peroxide:280   # synergy test
 celltwin validate-tox                      # model IC50s vs literature
 celltwin calibrate --apply                 # re-derive potency calibration
+celltwin fit-bayes rotenone                # Bayesian IC50 with credible interval
+celltwin assimilate                        # particle-filter data assimilation
 ```
 
 Example — a mitochondrial toxin's dose-response:
@@ -81,17 +85,20 @@ toxic to some tissues and not others.
 ## Repository layout
 
 ```
-data/                biology as YAML (cells, toxins)
-backend/celltwin/    engine (ODE + coupling), model, experiments, api, cli
-backend/tests/       unit + behavioral validation
-docs/                PLAN.md, biology.md
-frontend/            React visualization (Phase 3 — planned)
+data/                biology as YAML (cells, toxins, reference IC50s + calibration)
+backend/celltwin/    engine (ODE + coupling), model, experiments, validation,
+                     inference (JAX ODE, NUTS calibration, particle filter), api, cli
+backend/tests/       unit + behavioral + validation + Bayesian-recovery tests
+docs/                PLAN.md, biology.md, validation.md, inference.md
+frontend/            React visualization (planned)
 ```
 
 ## Status
 
-Phases 0–2 implemented (engine, screening, API, CLI, tests). Phase 3 (web
-frontend) and Phase 4 (quantitative calibration + more cell types) are next —
-see [`docs/PLAN.md`](docs/PLAN.md).
+Implemented: mechanistic + network engine, 18 toxins × 5 cell types, screening
+(dose-response/IC50, mechanism attribution, synergy), literature calibration
+(17/17 within 1 log), and a **Bayesian layer** (NUTS IC50 credible intervals +
+particle-filter data assimilation). 79 tests. Next: web frontend and joint
+posteriors over mechanism parameters — see [`docs/PLAN.md`](docs/PLAN.md).
 
 *Research/screening tool — not a substitute for experimental toxicology.*
