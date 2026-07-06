@@ -61,12 +61,18 @@ uvicorn celltwin.api.app:app --reload --app-dir backend
 | GET  | `/dose-response/{toxin_id}` | curve + IC50 |
 | POST | `/combine` | combination synergy score |
 
-## Reference toxins included
+## Reference library (18 toxins × 5 cell types)
 
-Rotenone · Cyanide · FCCP · Hydrogen peroxide · Menadione · Acetaminophen (APAP)
-· BSO · Triton X-100 — spanning mitochondrial inhibition, uncoupling, oxidative
-stress, GSH depletion, metabolism-dependent (bioactivated) toxicity, and membrane
-disruption.
+**Toxins** — Rotenone, Cyanide, Antimycin A, Oligomycin, FCCP (mitochondrial) ·
+H₂O₂, menadione, paraquat, tBHP, arsenite (oxidative) · BSO (GSH depletion) ·
+Triton X-100 (membrane) · staurosporine (apoptosis) · etoposide, cisplatin
+(genotoxic) · doxorubicin, arsenite (multi-mechanism) · acetaminophen, CCl₄
+(CYP-bioactivated).
+
+**Cell types** — hepatocyte, cardiomyocyte, neuron, proximal tubule (kidney),
+cancer cell — differing in energy dependence, antioxidant reserve, repair,
+apoptotic propensity, and CYP metabolism, so the same toxin can be selectively
+toxic to some tissues and not others.
 
 ## Repository layout
 

@@ -1,0 +1,16 @@
+id: neuron
+name: Neuron
+extends: hepatocyte
+description: >
+  Post-mitotic, extremely energy-demanding cell with limited antioxidant
+  reserve and essentially no regenerative capacity. Highly vulnerable to
+  mitochondrial (e.g. rotenone) and oxidative stress; minimal CYP metabolism.
+cyp_activity: 0.05
+parameters:
+  atp_thresh: 0.60
+  atp_necro: 0.35
+  ros_thresh: 0.20
+  ros_input_scale: 2.0
+  k_mem_rep: 0.08        # no repair
+  k_casp_on: 0.7
+  w_apop: 1.8

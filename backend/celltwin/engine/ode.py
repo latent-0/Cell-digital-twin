@@ -53,8 +53,13 @@ def rhs(t: float, y: np.ndarray, p: Params, m: Modifiers) -> np.ndarray:
         - p.gsh_consume_scale * m.gsh_extra * gsh
     )
 
-    # --- Caspase: triggered by high ROS or low ATP, with commitment feedback ---
-    trigger = p.w_ros * _relu(ros - p.ros_thresh) + p.w_atp * _relu(p.atp_thresh - atp)
+    # --- Caspase: triggered by high ROS, low ATP, direct inducers, or DNA damage ---
+    trigger = (
+        p.w_ros * _relu(ros - p.ros_thresh)
+        + p.w_atp * _relu(p.atp_thresh - atp)
+        + p.w_apop * m.apop_input
+        + p.w_dna * m.dna_input
+    )
     d_casp = (
         p.k_casp_on * trigger * (1.0 - casp)
         + p.k_casp_fb * casp * (1.0 - casp)

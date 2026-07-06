@@ -1,0 +1,10 @@
+id: arsenite
+name: Sodium arsenite
+toxin_class: multi_mechanism
+description: >
+  Binds protein thiols, depleting glutathione, and also generates ROS -- a
+  dual-mechanism metalloid toxin.
+requires_bioactivation: false
+targets:
+  - {node: gsh_pool,   effect: consume, ic50: 20.0, hill: 1.4, emax: 1.0}
+  - {node: ros_source, effect: produce, ic50: 30.0, hill: 1.3, emax: 0.8}

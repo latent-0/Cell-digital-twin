@@ -26,7 +26,21 @@ def load_cell(cell_id: str) -> CellModel:
     path = CELLS_DIR / f"{cell_id}.yaml"
     if not path.exists():
         raise FileNotFoundError(f"Unknown cell model '{cell_id}' (looked in {path})")
-    return CellModel.model_validate(_load_yaml(path))
+    data = _load_yaml(path)
+
+    # A cell may `extends` a base cell to inherit its relation graph (DRY): the
+    # child reuses the base's nodes/relations/process_map and overrides its own
+    # identity, parameters, and cyp_activity (and any graph field it restates).
+    base_id = data.pop("extends", None)
+    if base_id:
+        base = load_cell(base_id).model_dump()
+        for key in ("nodes", "relations", "process_map"):
+            data.setdefault(key, base[key])
+        merged_params = {**base.get("parameters", {}), **data.get("parameters", {})}
+        data["parameters"] = merged_params
+        data.setdefault("cyp_activity", base.get("cyp_activity", 1.0))
+
+    return CellModel.model_validate(data)
 
 
 @functools.lru_cache(maxsize=None)

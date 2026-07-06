@@ -31,15 +31,19 @@ def _cmd_list(args) -> int:
 
 
 def _cmd_validate(args) -> int:
-    cell = load_cell(args.cell)
-    problems = validate_cell(cell)
-    if problems:
-        print(f"{cell.id}: {len(problems)} problem(s):")
-        for p in problems:
-            print("  -", p)
-        return 1
-    print(f"{cell.id}: OK ({len(cell.nodes)} nodes, {len(cell.relations)} relations)")
-    return 0
+    cell_ids = list_cells()
+    rc = 0
+    for cid in cell_ids:
+        cell = load_cell(cid)
+        problems = validate_cell(cell)
+        if problems:
+            rc = 1
+            print(f"{cell.id}: {len(problems)} problem(s):")
+            for p in problems:
+                print("  -", p)
+        else:
+            print(f"{cell.id}: OK ({len(cell.nodes)} nodes, {len(cell.relations)} relations)")
+    return rc
 
 
 def _cmd_simulate(args) -> int:
@@ -94,7 +98,7 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="celltwin", description=__doc__)
     parser.add_argument("--cell", default="hepatocyte", help="cell model id")
     parser.add_argument("--hours", type=float, default=24.0, help="exposure duration")
-    parser.add_argument("--cyp", type=float, default=1.0, help="relative CYP450 activity")
+    parser.add_argument("--cyp", type=float, default=None, help="relative CYP450 activity (default: cell's own)")
     sub = parser.add_subparsers(dest="command", required=True)
 
     sub.add_parser("list", help="list available cells and toxins").set_defaults(func=_cmd_list)

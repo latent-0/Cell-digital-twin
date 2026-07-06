@@ -1,0 +1,15 @@
+id: cardiomyocyte
+name: Cardiomyocyte (heart muscle cell)
+extends: hepatocyte
+description: >
+  Highly energy-dependent, mitochondria-dense, poorly regenerative cardiac cell.
+  Very sensitive to mitochondrial and oxidative insults (e.g. doxorubicin
+  cardiotoxicity) and has low xenobiotic-metabolism capacity.
+cyp_activity: 0.1
+parameters:
+  atp_thresh: 0.55       # suffers energy stress at higher ATP than most cells
+  atp_necro: 0.30
+  ros_thresh: 0.22       # low oxidative tolerance
+  ros_input_scale: 1.9
+  k_mem_rep: 0.12        # poor membrane repair (post-mitotic)
+  k_casp_on: 0.6

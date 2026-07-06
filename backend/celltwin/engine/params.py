@@ -37,6 +37,8 @@ class Params:
     atp_thresh: float = 0.40    # ATP below which apoptosis is triggered
     w_ros: float = 1.0
     w_atp: float = 1.0
+    w_apop: float = 1.5         # weight of direct apoptosis inducers on the trigger
+    w_dna: float = 0.8          # weight of genotoxic (DNA-damage) drive on the trigger
 
     # --- Membrane integrity / necrosis ---
     k_mem_lpo: float = 1.0      # lipid-peroxidation damage (ROS x low-GSH)

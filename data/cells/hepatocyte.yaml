@@ -27,6 +27,9 @@ nodes:
   - {id: gclc,       label: "GCLC (glutathione synthesis)", type: gene, process: gsh_synthesis, compartment: nucleus}
   - {id: gsh_pool,   label: "Glutathione (GSH) pool", type: metabolite, process: gsh_pool}
 
+  # Genotoxic stress
+  - {id: dna, label: "Nuclear DNA", type: organelle, process: dna, compartment: nucleus}
+
   # Death machinery
   - {id: tp53,        label: "TP53", type: gene, compartment: nucleus}
   - {id: bax,         label: "BAX (pro-apoptotic)", type: gene, compartment: nucleus}
@@ -57,6 +60,7 @@ relations:
   - {source: cyp450,      target: gsh_pool, type: consumes, sign: -1}     # bioactivation drains GSH
   - {source: ros,         target: plasma_membrane, type: damages, sign: -1}
   - {source: ros,         target: tp53, type: activates, sign: 1}
+  - {source: dna,         target: tp53, type: activates, sign: 1}   # DNA damage -> p53
   - {source: atp,         target: apoptosis, type: inhibits, sign: -1}    # energy crisis promotes death
   - {source: tp53,        target: bax, type: transcribes, sign: 1}
   - {source: bax,         target: cytochrome_c, type: activates, sign: 1}
@@ -77,6 +81,11 @@ process_map:
   gclc: gsh_synthesis
   gsh_pool: gsh_pool
   plasma_membrane: membrane
+  casp3: apoptosis   # direct pro-apoptotic agents act here
+  dna: dna           # genotoxic agents act here
+
+# High xenobiotic-metabolism capacity is the hepatocyte's defining feature.
+cyp_activity: 1.0
 
 # --- Optional ODE parameter overrides (empty => engine defaults) ---------- #
 parameters: {}

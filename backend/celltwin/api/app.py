@@ -81,7 +81,7 @@ def post_simulate(request: SimulationRequest) -> SimulationResult:
 
 
 @app.get("/dose-response/{toxin_id}", response_model=DoseResponseResult)
-def get_dose_response(toxin_id: str, cell_id: str = "hepatocyte", hours: float = 24.0, cyp: float = 1.0) -> DoseResponseResult:
+def get_dose_response(toxin_id: str, cell_id: str = "hepatocyte", hours: float = 24.0, cyp: float | None = None) -> DoseResponseResult:
     try:
         cell = load_cell(cell_id)
         toxin = load_toxin(toxin_id)
@@ -91,7 +91,7 @@ def get_dose_response(toxin_id: str, cell_id: str = "hepatocyte", hours: float =
 
 
 @app.post("/combine", response_model=CombinationResult)
-def post_combine(exposures: list[Exposure], cell_id: str = "hepatocyte", hours: float = 24.0, cyp: float = 1.0) -> CombinationResult:
+def post_combine(exposures: list[Exposure], cell_id: str = "hepatocyte", hours: float = 24.0, cyp: float | None = None) -> CombinationResult:
     try:
         cell = load_cell(cell_id)
     except FileNotFoundError as exc:

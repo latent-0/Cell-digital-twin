@@ -1,0 +1,9 @@
+id: staurosporine
+name: Staurosporine
+toxin_class: apoptosis_inducer
+description: >
+  Broad kinase inhibitor and a canonical, potent inducer of intrinsic
+  apoptosis -- used as a positive control for programmed cell death.
+requires_bioactivation: false
+targets:
+  - {node: casp3, effect: damage, ic50: 0.05, hill: 2.0, emax: 1.0}

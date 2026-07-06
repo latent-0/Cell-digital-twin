@@ -1,0 +1,9 @@
+id: etoposide
+name: Etoposide
+toxin_class: genotoxic
+description: >
+  Topoisomerase II poison that causes double-strand DNA breaks, activating the
+  p53 -> BAX apoptotic program.
+requires_bioactivation: false
+targets:
+  - {node: dna, effect: damage, ic50: 5.0, hill: 1.5, emax: 1.0}

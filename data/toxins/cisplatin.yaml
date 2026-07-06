@@ -1,0 +1,10 @@
+id: cisplatin
+name: Cisplatin
+toxin_class: genotoxic
+description: >
+  Platinum chemotherapeutic that forms DNA crosslinks (genotoxic) and also
+  modestly depletes glutathione; classically nephrotoxic.
+requires_bioactivation: false
+targets:
+  - {node: dna,      effect: damage,  ic50: 15.0, hill: 1.4, emax: 1.0}
+  - {node: gsh_pool, effect: consume, ic50: 40.0, hill: 1.2, emax: 0.6}

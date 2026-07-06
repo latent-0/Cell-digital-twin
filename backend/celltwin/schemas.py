@@ -70,6 +70,9 @@ class CellModel(BaseModel):
     process_map: dict[str, str] = Field(default_factory=dict)
     #: Optional overrides for engine rate constants (see engine.params.Params).
     parameters: dict[str, float] = Field(default_factory=dict)
+    #: Baseline CYP450 (bioactivation) capacity of this cell type. Hepatocytes
+    #: are high; most other cell types are low. A request may override it.
+    cyp_activity: float = 1.0
 
     def resolve_process(self, node_id: str) -> Optional[str]:
         if node_id in self.process_map:
@@ -125,7 +128,8 @@ class SimulationRequest(BaseModel):
     exposures: list[Exposure] = Field(default_factory=list)
     duration_h: float = Field(24.0, gt=0, description="Exposure duration (hours).")
     n_points: int = Field(100, ge=2, le=5000)
-    cyp_activity: float = Field(1.0, ge=0, description="Relative CYP450 activity (bioactivation).")
+    #: Relative CYP450 activity (bioactivation). None => use the cell's default.
+    cyp_activity: Optional[float] = Field(None, ge=0)
 
 
 class TimePoint(BaseModel):

@@ -8,4 +8,7 @@ description: >
   so this toxin is dose-thresholded and metabolism-dependent.
 requires_bioactivation: true
 targets:
+  # Primary: NAPQI conjugates and depletes glutathione.
   - {node: gsh_pool, effect: consume, ic50: 2000.0, hill: 2.0, emax: 1.0}
+  # Secondary: once GSH is exhausted, NAPQI adducts impair mitochondria.
+  - {node: complex_I, effect: inhibit, ic50: 6000.0, hill: 2.0, emax: 0.85}

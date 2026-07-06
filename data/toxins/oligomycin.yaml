@@ -1,0 +1,9 @@
+id: oligomycin
+name: Oligomycin
+toxin_class: mitochondrial_inhibitor
+description: >
+  ATP synthase (Complex V) inhibitor. The proton gradient builds but cannot be
+  used to phosphorylate ADP, so ATP production fails.
+requires_bioactivation: false
+targets:
+  - {node: proton_gradient, effect: inhibit, ic50: 0.5, hill: 1.4, emax: 1.0}

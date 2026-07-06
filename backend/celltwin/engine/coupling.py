@@ -31,6 +31,8 @@ class Modifiers:
     gsh_synth_mod: float = 1.0    # multiplier on GSH synthesis (0..1)
     gsh_extra: float = 0.0        # extra GSH consumption from depleters
     mem_input: float = 0.0        # direct membrane damage from disruptors
+    apop_input: float = 0.0       # direct pro-apoptotic drive (e.g. staurosporine)
+    dna_input: float = 0.0        # genotoxic / DNA-damage drive (e.g. etoposide)
     #: Per-process total engagement, for mechanism attribution / debugging.
     engagement: dict[str, float] = field(default_factory=dict)
 
@@ -43,6 +45,8 @@ _PROCESS_KEYS = {
     "gsh_synthesis",   # inhibitors of GSH synthesis
     "gsh_pool",        # direct GSH depleters / reactive-metabolite conjugation
     "membrane",        # membrane disruptors
+    "apoptosis",       # direct pro-apoptotic agents
+    "dna",             # genotoxic / DNA-damaging agents
 }
 
 
@@ -84,5 +88,9 @@ def build_modifiers(
                 mods.gsh_extra += occ
             elif process == "membrane":
                 mods.mem_input += occ
+            elif process == "apoptosis":
+                mods.apop_input += occ
+            elif process == "dna":
+                mods.dna_input += occ
 
     return mods

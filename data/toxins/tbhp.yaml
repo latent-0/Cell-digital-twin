@@ -1,0 +1,9 @@
+id: tbhp
+name: tert-Butyl hydroperoxide (tBHP)
+toxin_class: oxidative_stressor
+description: >
+  Organic peroxide used as a standard oxidative-stress probe; oxidizes
+  glutathione and drives lipid peroxidation.
+requires_bioactivation: false
+targets:
+  - {node: ros_source, effect: produce, ic50: 40.0, hill: 1.6, emax: 1.0}

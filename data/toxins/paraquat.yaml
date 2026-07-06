@@ -1,0 +1,9 @@
+id: paraquat
+name: Paraquat
+toxin_class: oxidative_stressor
+description: >
+  Herbicide that redox-cycles to generate superoxide, causing sustained
+  oxidative stress (classically pulmonary, modeled here generically).
+requires_bioactivation: false
+targets:
+  - {node: ros_source, effect: produce, ic50: 100.0, hill: 1.5, emax: 1.0}

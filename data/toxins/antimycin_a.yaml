@@ -1,0 +1,9 @@
+id: antimycin_a
+name: Antimycin A
+toxin_class: mitochondrial_inhibitor
+description: >
+  Complex III inhibitor. Blocks electron transfer at the cytochrome bc1
+  complex, collapsing ATP output and generating superoxide upstream.
+requires_bioactivation: false
+targets:
+  - {node: complex_III, effect: inhibit, ic50: 0.01, hill: 1.3, emax: 1.0}

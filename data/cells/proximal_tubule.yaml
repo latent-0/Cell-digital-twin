@@ -1,0 +1,14 @@
+id: proximal_tubule
+name: Renal proximal tubule cell
+extends: hepatocyte
+description: >
+  Kidney epithelial cell with heavy transport-driven energy demand that
+  concentrates xenobiotics. Characteristically sensitive to genotoxic and
+  oxidative nephrotoxins such as cisplatin; moderate metabolic capacity.
+cyp_activity: 0.3
+parameters:
+  atp_thresh: 0.50
+  ros_thresh: 0.25
+  gsh_consume_scale: 1.3
+  w_dna: 1.2             # cisplatin nephrotoxicity
+  k_mem_rep: 0.15

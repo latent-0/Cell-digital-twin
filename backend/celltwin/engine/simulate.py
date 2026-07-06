@@ -25,7 +25,8 @@ def simulate(
 ) -> SimulationResult:
     """Run the coupled hybrid engine for one exposure scenario."""
     params = Params().with_overrides(cell.parameters)
-    mods = build_modifiers(cell, request.exposures, toxins, request.cyp_activity)
+    cyp = request.cyp_activity if request.cyp_activity is not None else cell.cyp_activity
+    mods = build_modifiers(cell, request.exposures, toxins, cyp)
 
     t_eval = np.linspace(0.0, request.duration_h, request.n_points)
     sol = solve_ivp(

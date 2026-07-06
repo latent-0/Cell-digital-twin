@@ -23,7 +23,7 @@ def _viability_at(
     toxins: dict[str, Toxin],
     exposures: list[Exposure],
     duration_h: float,
-    cyp_activity: float,
+    cyp_activity: Optional[float],
 ) -> float:
     req = SimulationRequest(
         cell_id=cell.id,
@@ -80,7 +80,7 @@ def dose_response(
     doses: Optional[list[float]] = None,
     duration_h: float = 24.0,
     n_doses: int = 24,
-    cyp_activity: float = 1.0,
+    cyp_activity: Optional[float] = None,
 ) -> DoseResponseResult:
     dose_arr = np.array(doses) if doses is not None else _auto_dose_range(toxin, n_doses)
     via = np.array(
@@ -107,7 +107,7 @@ def combination(
     cell: CellModel,
     toxins: dict[str, Toxin],
     duration_h: float = 24.0,
-    cyp_activity: float = 1.0,
+    cyp_activity: Optional[float] = None,
 ) -> CombinationResult:
     """Score synergy vs a Bliss-independence baseline (on the killing fraction)."""
     observed = _viability_at(cell, toxins, exposures, duration_h, cyp_activity)

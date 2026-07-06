@@ -1,0 +1,18 @@
+id: cancer_cell
+name: Tumor cell line (generic)
+extends: hepatocyte
+description: >
+  Transformed, proliferative cell exhibiting classic resistance hallmarks:
+  glycolytic (Warburg) metabolism that tolerates low ATP, elevated antioxidant
+  capacity, strong repair, and blunted apoptosis. Harder to kill -- a contrast
+  for therapeutic-window screening.
+cyp_activity: 0.2
+parameters:
+  atp_thresh: 0.25       # glycolytic; tolerates low mitochondrial ATP
+  atp_necro: 0.12
+  ros_thresh: 0.45       # antioxidant-rich
+  k_mem_rep: 0.30        # strong repair
+  k_casp_on: 0.25        # apoptosis-resistant
+  k_casp_fb: 0.15
+  w_apop: 0.9
+  w_dna: 0.5             # DNA-damage tolerant
