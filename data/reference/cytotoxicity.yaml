@@ -1,0 +1,136 @@
+# Literature reference cytotoxicity for validation & calibration.
+#
+# IMPORTANT: these are *cellular* cytotoxic IC50 values (dose at ~50% viability
+# in an in-vitro assay), NOT biochemical target-binding constants. They are
+# highly assay-, cell-line-, timepoint- and readout-dependent and often vary by
+# 1-2 orders of magnitude across studies, so each value is a representative
+# order-of-magnitude anchor with a confidence tag, not a ground truth.
+#
+# Fields: toxin, cell (model cell context to compare in), ic50_uM,
+#         confidence (high|medium|low), source (short), note.
+# The calibration step tunes each toxin's effective potency so the model
+# reproduces these anchors; validation reports the residual fold-error and the
+# cross-toxin rank-order (Spearman) correlation.
+
+references:
+  - toxin: acetaminophen
+    cell: hepatocyte
+    ic50_uM: 20000
+    confidence: high
+    source: "Arch Toxicol 2018 (10.1007/s00204-018-2371-0); PubMed 7791125"
+    note: "Human hepatocyte / HepG2 MTT IC50 ~18.5-20 mM; mitochondrial + DNA injury."
+
+  - toxin: staurosporine
+    cell: hepatocyte
+    ic50_uM: 0.05
+    confidence: high
+    source: "PubMed 28349827 (HepG2); widely used at 20-100 nM as apoptosis control"
+    note: "Canonical intrinsic-apoptosis inducer."
+
+  - toxin: rotenone
+    cell: hepatocyte
+    ic50_uM: 25
+    confidence: medium
+    source: "Mol Cell Biochem 2013, PubMed 23963993 (HepG2 2D, 12.5-250 uM, 24 h)"
+    note: "2D HepG2 cellular cytotoxicity is uM even though Complex I binding is nM (glycolytic tolerance)."
+
+  - toxin: hydrogen_peroxide
+    cell: hepatocyte
+    ic50_uM: 400
+    confidence: medium
+    source: "COS-7 24 h ~67% viability at 400 uM; HEK293 IC50 ~0.96 mM/2 h"
+    note: "Strongly exposure-time dependent."
+
+  - toxin: tbhp
+    cell: hepatocyte
+    ic50_uM: 80
+    confidence: medium
+    source: "HepG2 (PMC8336407); damage above ~50 uM"
+    note: ""
+
+  - toxin: menadione
+    cell: hepatocyte
+    ic50_uM: 20
+    confidence: medium
+    source: "Representative hepatocyte/HepG2 redox-cycling quinone cytotoxicity"
+    note: ""
+
+  - toxin: arsenite
+    cell: hepatocyte
+    ic50_uM: 20
+    confidence: medium
+    source: "Representative sodium arsenite in-vitro cytotoxicity"
+    note: ""
+
+  - toxin: doxorubicin
+    cell: hepatocyte
+    ic50_uM: 1.0
+    confidence: medium
+    source: "HepG2 SRB assay (Hindawi TSWJ 2014, 10.1155/2014/450390)"
+    note: ""
+
+  - toxin: cisplatin
+    cell: hepatocyte
+    ic50_uM: 20
+    confidence: medium
+    source: "HepG2 48-72 h (meta-analysis PMC10421281; high inter-study variance)"
+    note: ""
+
+  - toxin: cyanide
+    cell: hepatocyte
+    ic50_uM: 500
+    confidence: low
+    source: "Representative KCN cellular cytotoxicity (hundreds of uM-mM)"
+    note: ""
+
+  - toxin: antimycin_a
+    cell: hepatocyte
+    ic50_uM: 5
+    confidence: low
+    source: "Representative Complex III inhibitor cellular cytotoxicity"
+    note: ""
+
+  - toxin: oligomycin
+    cell: hepatocyte
+    ic50_uM: 5
+    confidence: low
+    source: "Representative ATP synthase inhibitor cellular cytotoxicity"
+    note: ""
+
+  - toxin: fccp
+    cell: hepatocyte
+    ic50_uM: 10
+    confidence: low
+    source: "Representative protonophore uncoupler cellular cytotoxicity"
+    note: ""
+
+  - toxin: paraquat
+    cell: hepatocyte
+    ic50_uM: 500
+    confidence: low
+    source: "Representative paraquat in-vitro cytotoxicity"
+    note: ""
+
+  - toxin: etoposide
+    cell: hepatocyte
+    ic50_uM: 10
+    confidence: low
+    source: "Representative topoisomerase-II poison cellular cytotoxicity"
+    note: ""
+
+  - toxin: triton_x100
+    cell: hepatocyte
+    ic50_uM: 60
+    confidence: low
+    source: "Representative non-ionic detergent lytic concentration (~CMC scale)"
+    note: ""
+
+  - toxin: carbon_tetrachloride
+    cell: hepatocyte
+    ic50_uM: 5000
+    confidence: low
+    source: "Representative CCl4 cytotoxicity in CYP-competent cells (mM scale)"
+    note: "Requires CYP bioactivation."
+
+  # BSO is a sensitizer, not directly cytotoxic at usual doses -> excluded from
+  # IC50 calibration (validated instead via the BSO+H2O2 synergy test).

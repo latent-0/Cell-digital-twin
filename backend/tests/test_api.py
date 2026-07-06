@@ -23,7 +23,8 @@ def test_graph_endpoint():
 
 
 def test_simulate_endpoint():
-    body = {"exposures": [{"toxin_id": "rotenone", "dose": 1.0}], "duration_h": 24}
+    ic50 = client.get("/dose-response/rotenone").json()["ic50"]
+    body = {"exposures": [{"toxin_id": "rotenone", "dose": ic50 * 30}], "duration_h": 24}
     res = client.post("/simulate", json=body).json()
     assert res["final_viability"] < 0.1
     assert res["mechanism"]["dominant"] == "energy failure"

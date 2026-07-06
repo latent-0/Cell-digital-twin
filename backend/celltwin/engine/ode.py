@@ -41,7 +41,7 @@ def rhs(t: float, y: np.ndarray, p: Params, m: Modifiers) -> np.ndarray:
         + p.k_ros_etc * (1.0 - m.etc_activity)
         + p.ros_input_scale * m.ros_input
     )
-    ros_scav = p.k_ros_scav * ros * gsh
+    ros_scav = (p.k_ros_scav0 + p.k_ros_scav * gsh) * ros
     d_ros = ros_prod - ros_scav
 
     # --- GSH: synthesis minus turnover, ROS-scavenging cost, and depleters ---

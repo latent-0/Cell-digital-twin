@@ -95,11 +95,19 @@ Current model reproduces, and the test suite asserts:
 - **CCl₄ and APAP are CYP-gated**: both are lethal to high-CYP hepatocytes and
   spared in low-CYP cell types or when `cyp_activity=0`.
 
-### Phase 4 quantitative targets (not yet met)
+### Quantitative calibration (done — see `docs/validation.md`)
 
-- IC50s within ~1 log of published cell-based values.
-- Time-to-death kinetics consistent with reported assays.
-- Each numeric parameter annotated with a citation.
+- **IC50s within 1 log of published values: 17/17**, median fold-error 1.00×,
+  cross-toxin rank-order Spearman ρ = 0.996 (ρ ≈ 0.88 even *before* calibration).
+- Effective potencies calibrated against `data/reference/cytotoxicity.yaml`
+  (representative literature IC50s with sources) via a transparent overlay.
+
+### Still open (Phase 4 continued)
+
+- Held-out (blind) test-set prediction, not just calibration to anchors.
+- Time-course (trajectory) validation against kinetic assay data.
+- Bayesian posteriors over parameters (next) for credible intervals + data
+  assimilation.
 
 ## Known simplifications (v0.1)
 

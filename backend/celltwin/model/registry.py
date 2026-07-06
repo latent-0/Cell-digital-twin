@@ -14,11 +14,33 @@ from ..schemas import CellModel, Toxin
 DATA_DIR = Path(__file__).resolve().parents[3] / "data"
 CELLS_DIR = DATA_DIR / "cells"
 TOXINS_DIR = DATA_DIR / "toxins"
+REFERENCE_DIR = DATA_DIR / "reference"
+CALIBRATION_FILE = REFERENCE_DIR / "calibration.yaml"
 
 
 def _load_yaml(path: Path) -> dict:
     with open(path, "r", encoding="utf-8") as fh:
         return yaml.safe_load(fh)
+
+
+@functools.lru_cache(maxsize=1)
+def _calibration() -> dict[str, float]:
+    """Per-toxin effective-potency scale factors, learned from reference data.
+
+    Kept as a separate overlay so the authored (interpretable) potencies in
+    data/toxins/*.yaml stay untouched; calibration to cellular cytotoxicity is a
+    transparent, re-derivable layer on top (and later, so is a Bayesian posterior).
+    """
+    if not CALIBRATION_FILE.exists():
+        return {}
+    data = _load_yaml(CALIBRATION_FILE) or {}
+    return {k: float(v) for k, v in (data.get("potency_scale") or {}).items()}
+
+
+def clear_caches() -> None:
+    load_cell.cache_clear()
+    load_toxin.cache_clear()
+    _calibration.cache_clear()
 
 
 @functools.lru_cache(maxsize=None)
@@ -48,7 +70,12 @@ def load_toxin(toxin_id: str) -> Toxin:
     path = TOXINS_DIR / f"{toxin_id}.yaml"
     if not path.exists():
         raise FileNotFoundError(f"Unknown toxin '{toxin_id}' (looked in {path})")
-    return Toxin.model_validate(_load_yaml(path))
+    toxin = Toxin.model_validate(_load_yaml(path))
+    scale = _calibration().get(toxin_id)
+    if scale and scale != 1.0:
+        for tgt in toxin.targets:
+            tgt.ic50 *= scale  # calibration overlay: shift effective potency
+    return toxin
 
 
 def list_cells() -> list[str]:

@@ -28,7 +28,8 @@ def test_dose_response_curve_spans_full_effect(cell, toxins):
 
 
 def test_mechanism_energy_failure_for_mito_toxin(cell, toxins):
-    m = _mechanism_for(cell, toxins, "rotenone", 1.0)
+    ic50 = dose_response(toxins["rotenone"], cell, toxins).ic50
+    m = _mechanism_for(cell, toxins, "rotenone", ic50 * 30)
     assert m.dominant == "energy failure"
     assert m.energy_failure > 0.5
 
@@ -50,8 +51,8 @@ def test_apap_is_cyp_gated(cell, toxins):
 def test_bso_synergizes_with_h2o2(cell, toxins):
     """GSH-synthesis blockade sensitizes cells to an oxidant (known biology)."""
     combo = [
-        Exposure(toxin_id="bso", dose=60.0),
-        Exposure(toxin_id="hydrogen_peroxide", dose=8.0),
+        Exposure(toxin_id="bso", dose=150.0),
+        Exposure(toxin_id="hydrogen_peroxide", dose=280.0),
     ]
     res = combination(combo, cell, toxins, duration_h=24)
     assert res.synergy > 0.1

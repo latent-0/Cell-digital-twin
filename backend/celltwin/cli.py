@@ -76,6 +76,30 @@ def _cmd_dose_response(args) -> int:
     return 0
 
 
+def _cmd_validate_tox(args) -> int:
+    from .validation.validate import format_report, validate_model
+
+    report = validate_model(duration_h=args.hours)
+    print(format_report(report))
+    return 0
+
+
+def _cmd_calibrate(args) -> int:
+    from .validation.calibrate import apply_calibration, compute_calibration
+
+    results = compute_calibration(duration_h=args.hours)
+    print(f"{'toxin':22s} {'model IC50':>12s} {'reference':>10s} {'new scale':>12s}")
+    print("-" * 60)
+    for r in results:
+        print(f"{r.toxin:22s} {r.model_ic50_before:>12.3g} {r.reference_ic50:>10.3g} {r.new_scale:>12.4g}")
+    if args.apply:
+        apply_calibration(results)
+        print(f"\nWrote calibration overlay ({len(results)} toxins).")
+    else:
+        print("\n(dry run; pass --apply to write the calibration overlay)")
+    return 0
+
+
 def _parse_exposure(spec: str) -> Exposure:
     tid, _, dose = spec.partition(":")
     return Exposure(toxin_id=tid, dose=float(dose))
@@ -118,6 +142,12 @@ def main(argv: list[str] | None = None) -> int:
     p_cmb = sub.add_parser("combine", help="combination synergy test (toxin:dose ...)")
     p_cmb.add_argument("exposures", nargs="+")
     p_cmb.set_defaults(func=_cmd_combine)
+
+    sub.add_parser("validate-tox", help="validate model IC50s vs literature").set_defaults(func=_cmd_validate_tox)
+
+    p_cal = sub.add_parser("calibrate", help="calibrate potencies to literature IC50s")
+    p_cal.add_argument("--apply", action="store_true", help="write the calibration overlay")
+    p_cal.set_defaults(func=_cmd_calibrate)
 
     args = parser.parse_args(argv)
     return args.func(args)

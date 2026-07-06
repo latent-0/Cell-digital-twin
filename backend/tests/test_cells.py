@@ -40,14 +40,20 @@ def test_all_cells_control_survive(cell_id):
     assert simulate(req, load_cell(cell_id), load_all_toxins()).final_viability > 0.95
 
 
+# BSO is a sensitizer (blocks GSH synthesis) -- tolerated alone by design, so it
+# is not expected to be directly lethal. Its effect is validated via synergy.
+_SENSITIZERS = {"bso"}
+
+
 @pytest.mark.parametrize("toxin_id", ALL_TOXINS)
 def test_every_toxin_runs_and_kills_at_high_dose(toxin_id):
-    """Every toxin must integrate cleanly and be lethal at a large dose."""
+    """Every directly-cytotoxic toxin must integrate cleanly and kill at a large dose."""
     tox = load_all_toxins()[toxin_id]
     max_ic50 = max(t.ic50 for t in tox.targets)
     v = _via("hepatocyte", toxin_id, max_ic50 * 1000, cyp=1.0)
     assert 0.0 <= v <= 1.0
-    assert v < 0.5, f"{toxin_id} not lethal at high dose (viability {v:.2f})"
+    if toxin_id not in _SENSITIZERS:
+        assert v < 0.5, f"{toxin_id} not lethal at high dose (viability {v:.2f})"
 
 
 def test_genotoxic_and_apoptotic_mechanisms():
@@ -67,11 +73,15 @@ def test_ccl4_requires_cyp():
 
 def test_apap_liver_selective():
     """APAP is far more toxic to high-CYP hepatocytes than to low-CYP neurons."""
-    assert _via("hepatocyte", "acetaminophen", 8000) < _via("neuron", "acetaminophen", 8000)
+    tox = load_all_toxins()
+    dose = dose_response(tox["acetaminophen"], load_cell("hepatocyte"), tox).ic50 * 1.2
+    assert _via("hepatocyte", "acetaminophen", dose) < _via("neuron", "acetaminophen", dose)
 
 
 def test_rotenone_neuron_more_vulnerable_than_cancer():
-    assert _via("neuron", "rotenone", 0.02) < _via("cancer_cell", "rotenone", 0.02)
+    tox = load_all_toxins()
+    dose = dose_response(tox["rotenone"], load_cell("hepatocyte"), tox).ic50
+    assert _via("neuron", "rotenone", dose) < _via("cancer_cell", "rotenone", dose)
 
 
 def test_cisplatin_tubule_selective_over_cancer():

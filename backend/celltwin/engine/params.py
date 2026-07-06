@@ -20,7 +20,8 @@ class Params:
     # --- ROS / oxidative stress ---
     k_ros_basal: float = 0.10   # baseline ROS generation
     k_ros_etc: float = 1.0      # extra ROS leak from a dysfunctional ETC
-    k_ros_scav: float = 2.0     # GSH-dependent ROS scavenging
+    k_ros_scav0: float = 0.5    # GSH-INDEPENDENT scavenging (catalase/thioredoxin)
+    k_ros_scav: float = 1.5     # GSH-dependent scavenging (k_ros_scav0+k_ros_scav=2 keeps ROS0)
     ros_input_scale: float = 1.5  # per-unit-occupancy ROS from oxidative toxins
 
     # --- Glutathione buffer ---

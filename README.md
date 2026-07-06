@@ -9,7 +9,9 @@ simulation forward, and read out **viability**, a **dose-response curve / IC50**
 the **mechanism of death**, and **combination synergy** between toxins.
 
 > Full architecture and roadmap: [`docs/PLAN.md`](docs/PLAN.md).
-> Biology & validation: [`docs/biology.md`](docs/biology.md).
+> Biology & assumptions: [`docs/biology.md`](docs/biology.md).
+> Validation & calibration: [`docs/validation.md`](docs/validation.md) —
+> model IC50s land **17/17 within 1 log** of literature (Spearman ρ = 0.996).
 
 ## How it works (hybrid engine)
 
@@ -33,9 +35,11 @@ pip install -e ".[dev]"        # install (Python ≥ 3.10)
 pytest -q                      # run the test suite
 
 celltwin list                              # available cells & toxins
-celltwin simulate rotenone --dose 0.5      # single exposure + mechanism
+celltwin simulate rotenone --dose 50       # single exposure + mechanism
 celltwin dose-response menadione           # dose-response curve + IC50
-celltwin combine bso:60 hydrogen_peroxide:8   # synergy test
+celltwin combine bso:150 hydrogen_peroxide:280   # synergy test
+celltwin validate-tox                      # model IC50s vs literature
+celltwin calibrate --apply                 # re-derive potency calibration
 ```
 
 Example — a mitochondrial toxin's dose-response:

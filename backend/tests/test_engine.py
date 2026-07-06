@@ -6,6 +6,7 @@ from celltwin.engine.coupling import build_modifiers, hill_occupancy
 from celltwin.engine.ode import baseline_state, rhs
 from celltwin.engine.params import BASELINE_STATE, Params
 from celltwin.engine.simulate import simulate
+from celltwin.experiments.screen import dose_response
 from celltwin.schemas import Exposure, SimulationRequest
 
 
@@ -37,14 +38,15 @@ def test_control_stays_healthy(cell, toxins):
 
 
 def test_toxin_reduces_viability(cell, toxins):
-    req = SimulationRequest(exposures=[Exposure(toxin_id="rotenone", dose=1.0)], duration_h=24)
-    res = simulate(req, cell, toxins)
-    assert res.final_viability < 0.1
+    ic50 = dose_response(toxins["rotenone"], cell, toxins).ic50
+    req = SimulationRequest(exposures=[Exposure(toxin_id="rotenone", dose=ic50 * 30)], duration_h=24)
+    assert simulate(req, cell, toxins).final_viability < 0.1
 
 
 def test_dose_monotonicity(cell, toxins):
-    """Higher dose -> equal or lower viability."""
-    doses = [0.0, 0.001, 0.01, 0.1, 1.0, 10.0]
+    """Higher dose -> equal or lower viability (doses spanning the IC50)."""
+    ic50 = dose_response(toxins["rotenone"], cell, toxins).ic50
+    doses = [0.0] + list(np.logspace(np.log10(ic50 / 100), np.log10(ic50 * 100), 6))
     vias = []
     for d in doses:
         req = SimulationRequest(exposures=[Exposure(toxin_id="rotenone", dose=d)], duration_h=24)
