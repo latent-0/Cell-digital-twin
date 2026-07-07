@@ -25,3 +25,6 @@ frontend/dist/
 *.swp
 .idea/
 .vscode/
+
+# TS build info
+*.tsbuildinfo
