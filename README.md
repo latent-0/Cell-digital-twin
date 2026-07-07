@@ -55,6 +55,19 @@ Dose-response: rotenone on hepatocyte (24.0 h)
   ...
 ```
 
+## Interactive dashboard
+
+A self-contained dashboard (no build step, no server) visualizes real model
+output — pick a cell type and toxin to see the relation network light up, the
+dose-response/IC50, the 24 h time course, mechanism attribution, tissue
+selectivity, literature validation, and the Bayesian + assimilation panels.
+
+```bash
+python scripts/build_data.py       # recompute frontend/twindata.json from the engine
+python scripts/build_frontend.py   # assemble frontend/index.html (standalone)
+# then just open frontend/index.html in a browser
+```
+
 ## REST API
 
 ```bash
