@@ -13,9 +13,30 @@ from ..schemas import (
     TimePoint,
     Toxin,
 )
-from .coupling import build_modifiers
+from .coupling import Modifiers, build_modifiers
 from .ode import baseline_state, rhs, viability
 from .params import STATE_ORDER, Params
+
+
+def run_modifiers(mods: Modifiers, params: Params | None = None, duration_h: float = 24.0) -> dict:
+    """Integrate the ODE core directly from a Modifiers bundle (no toxin coupling).
+
+    Returns the end-state readouts + viability. Used by the ML surrogate (which
+    learns modifiers -> readouts) and any low-level engine consumer.
+    """
+    p = params or Params()
+    sol = solve_ivp(
+        rhs, (0.0, duration_h), baseline_state(), args=(p, mods),
+        method="LSODA", rtol=1e-6, atol=1e-9, max_step=duration_h / 20.0,
+    )
+    if not sol.success:
+        raise RuntimeError(f"ODE integration failed: {sol.message}")
+    atp, ros, gsh, casp, mem = sol.y[:, -1]
+    return {
+        "atp": float(max(atp, 0.0)), "ros": float(max(ros, 0.0)), "gsh": float(max(gsh, 0.0)),
+        "caspase": float(np.clip(casp, 0, 1)), "membrane": float(np.clip(mem, 0, 1)),
+        "viability": viability(atp, ros, gsh, casp, mem),
+    }
 
 
 def simulate(

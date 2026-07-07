@@ -122,8 +122,17 @@ frontend/            React visualization (planned)
 
 Implemented: mechanistic + network engine, 18 toxins × 5 cell types, screening
 (dose-response/IC50, mechanism attribution, synergy), literature calibration
-(17/17 within 1 log), and a **Bayesian layer** (NUTS IC50 credible intervals +
-particle-filter data assimilation). 79 tests. Next: web frontend and joint
-posteriors over mechanism parameters — see [`docs/PLAN.md`](docs/PLAN.md).
+(17/17 within 1 log), a **Bayesian layer** (NUTS IC50 credible intervals +
+particle-filter data assimilation), a **cell-population layer** (heterogeneity
+smooths dose-response into realistic sigmoids), an **ML surrogate** (fast learned
+emulator of the ODE endpoints), and **static + live React frontends**. 87 tests.
+
+```bash
+celltwin population rotenone      # population (heterogeneity) dose-response
+celltwin train-surrogate          # train + score the ML emulator
+```
+
+Next: joint posteriors over mechanism parameters, held-out predictive test set —
+see [`docs/PLAN.md`](docs/PLAN.md).
 
 *Research/screening tool — not a substitute for experimental toxicology.*

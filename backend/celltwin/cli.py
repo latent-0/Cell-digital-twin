@@ -145,6 +145,34 @@ def _cmd_assimilate(args) -> int:
     return 0
 
 
+def _cmd_population(args) -> int:
+    from .experiments.population import CellPopulation
+    from .experiments.screen import dose_response
+    cell = load_cell(args.cell); toxins = load_all_toxins(); toxin = toxins[args.toxin]
+    ic50 = dose_response(toxin, cell, toxins).ic50 or 1.0
+    doses = [ic50 * m for m in (0.2, 0.5, 1, 2, 5)]
+    pop = CellPopulation.for_toxin(cell, toxin, toxins, n_cells=args.n_cells, cv=args.cv)
+    print(f"Population dose-response: {args.toxin} on {cell.id} (n={args.n_cells}, cv={args.cv})")
+    print(f"  {'dose':>10s} {'single-cell':>12s} {'pop mean':>10s} {'surviving':>10s}")
+    for d in doses:
+        sc = dose_response(toxin, cell, toxins, doses=[d]).curve[0].viability
+        r = pop.response(d)
+        print(f"  {d:>10.4g} {sc:>12.1%} {r['mean_viability']:>10.1%} {r['surviving_fraction']:>10.1%}")
+    return 0
+
+
+def _cmd_train_surrogate(args) -> int:
+    from .surrogate import train_surrogate
+    print(f"Training ML surrogate on {args.samples} simulator samples...")
+    sur, m = train_surrogate(n_samples=args.samples)
+    print(f"  test R2 (overall): {m['r2_overall']:.3f}   MAE: {m['mae_overall']:.3f}")
+    for r, v in m["per_readout"].items():
+        print(f"    {r:12s} R2={v['r2']:.3f}  MAE={v['mae']:.3f}")
+    if args.out:
+        sur.save(args.out); print(f"  saved to {args.out}")
+    return 0
+
+
 def _parse_exposure(spec: str) -> Exposure:
     tid, _, dose = spec.partition(":")
     return Exposure(toxin_id=tid, dose=float(dose))
@@ -200,6 +228,17 @@ def main(argv: list[str] | None = None) -> int:
     p_fb.add_argument("--warmup", type=int, default=400)
     p_fb.add_argument("--samples", type=int, default=800)
     p_fb.set_defaults(func=_cmd_fit_bayes)
+
+    p_pop = sub.add_parser("population", help="population dose-response (heterogeneity smoothing)")
+    p_pop.add_argument("toxin")
+    p_pop.add_argument("--cv", type=float, default=0.4, help="biological variability (CoV)")
+    p_pop.add_argument("--n-cells", type=int, default=200)
+    p_pop.set_defaults(func=_cmd_population)
+
+    p_sur = sub.add_parser("train-surrogate", help="train the ML surrogate emulator")
+    p_sur.add_argument("--samples", type=int, default=3000)
+    p_sur.add_argument("--out", default=None, help="save the fitted surrogate to this path")
+    p_sur.set_defaults(func=_cmd_train_surrogate)
 
     p_as = sub.add_parser("assimilate", help="particle-filter data assimilation demo")
     p_as.add_argument("--true-severity", type=float, default=0.7)
