@@ -1,0 +1,8 @@
+# Keep generated artifacts out of GitHub's Languages statistics so the bar
+# reflects real source (Python + TypeScript), not baked output.
+frontend/index.html      linguist-generated=true
+frontend/twindata.json   linguist-generated=true
+webapp/package-lock.json linguist-generated=true
+
+# Data files are real project content, not vendored.
+data/**/*.yaml           linguist-detectable=true
