@@ -80,6 +80,12 @@ python scripts/build_data.py       # recompute frontend/twindata.json from the e
 python scripts/build_frontend.py   # assemble the standalone frontend/index.html
 ```
 
+### Hosting (Vercel + a container host)
+
+Frontend on Vercel, backend (`Dockerfile` / `render.yaml`) on any container host;
+the app calls the backend at `VITE_API_BASE`. Full walkthrough:
+[`docs/deploy.md`](docs/deploy.md).
+
 ## REST API
 
 ```bash

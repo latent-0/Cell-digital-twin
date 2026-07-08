@@ -1,0 +1,15 @@
+.git
+**/__pycache__
+*.pyc
+.pytest_cache
+.mypy_cache
+webapp
+frontend/index.html
+frontend/twindata.json
+*.egg-info
+.venv
+venv
+dist
+build
+node_modules
+*.tsbuildinfo

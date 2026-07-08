@@ -5,6 +5,8 @@ Run: uvicorn celltwin.api.app:app --reload  (from the backend/ directory)
 
 from __future__ import annotations
 
+import os
+
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -27,9 +29,13 @@ from ..schemas import (
 )
 
 app = FastAPI(title="Cell Digital Twin", version="0.1.0")
+
+# Comma-separated origins via ALLOWED_ORIGINS (e.g. "https://your-app.vercel.app").
+# Defaults to "*" so it works out of the box; lock it down in production.
+_origins = [o.strip() for o in os.environ.get("ALLOWED_ORIGINS", "*").split(",") if o.strip()]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=_origins,
     allow_methods=["*"],
     allow_headers=["*"],
 )

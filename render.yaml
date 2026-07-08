@@ -1,0 +1,19 @@
+# Render blueprint for the Cell Digital Twin API.
+# Deploy: push to GitHub -> Render -> New -> Blueprint -> pick this repo.
+# (Any container host works; this is one convenient option.)
+services:
+  - type: web
+    name: celltwin-api
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    # The NUTS / particle-filter / surrogate endpoints load JAX and can need
+    # ~1 GB RAM. The fast endpoints (simulate, dose-response, graph, combine,
+    # population) run comfortably on the smallest tiers. Bump the plan if the
+    # heavy endpoints OOM.
+    plan: starter
+    envVars:
+      # Lock this down to your Vercel domain in production, e.g.
+      #   https://your-app.vercel.app
+      - key: ALLOWED_ORIGINS
+        value: "*"
