@@ -1,0 +1,58 @@
+{
+  "calibration": {
+    "nPass": 17,
+    "n": 17,
+    "spearman": 0.996,
+    "medianFold": 1.0
+  },
+  "bayes": {
+    "ic50_median": 16.84,
+    "ci90": [
+      15.84,
+      18.09
+    ],
+    "rhat": 0.999,
+    "shrinkage": 0.942,
+    "recovered_potency": 0.673,
+    "true_potency": 0.7
+  },
+  "assim": {
+    "truth": 0.7,
+    "recovered": 0.701,
+    "ci_w0": 0.147,
+    "ci_w1": 0.056
+  },
+  "selectivity": {
+    "rotenone": {
+      "neuron": 14.073,
+      "cardiomyocyte": 14.906,
+      "hepatocyte": 25.0,
+      "proximal_tubule": 24.132,
+      "cancer_cell": 42.895
+    },
+    "doxorubicin": {
+      "neuron": 0.772,
+      "cardiomyocyte": 0.871,
+      "hepatocyte": 1.0,
+      "proximal_tubule": 0.732,
+      "cancer_cell": 18.194
+    },
+    "cisplatin": {
+      "neuron": 15.713,
+      "cardiomyocyte": 17.464,
+      "hepatocyte": 20.0,
+      "proximal_tubule": 14.995,
+      "cancer_cell": 349.926
+    }
+  },
+  "surrogate": {
+    "r2_overall": 0.933,
+    "per": {
+      "viability": 0.854,
+      "atp": 0.993,
+      "gsh": 0.989,
+      "caspase": 0.866,
+      "membrane": 0.961
+    }
+  }
+}
